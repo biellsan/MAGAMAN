@@ -1,0 +1,39 @@
+// Colors
+$color-primary: var(--color-primary, #3b82f6);
+$color-secondary: var(--color-secondary, #1f2937);
+$color-background: var(--color-background, #ffffff);
+$color-text: var(--color-text, #374151);
+$color-border: var(--color-border, #e5e7eb);
+
+// Typography
+$font-heading: var(--font-heading);
+$font-body: var(--font-body);
+$font-size-base: 16px;
+$line-height-base: 1.5;
+
+// Spacing
+$spacing-unit: 4px;
+$spacing-tight: $spacing-unit * 2;
+$spacing-base: $spacing-unit * 4;
+$spacing-loose: $spacing-unit * 6;
+$spacing-extra-loose: $spacing-unit * 8;
+
+// Breakpoints
+$breakpoint-small: 640px;
+$breakpoint-medium: 768px;
+$breakpoint-large: 1024px;
+$breakpoint-extra-large: 1280px;
+
+// Container
+$container-padding: $spacing-base;
+$container-max-width: 1200px;
+
+// Border Radius
+$border-radius-sm: 0.125rem;
+$border-radius: 0.25rem;
+$border-radius-lg: 0.5rem;
+
+// Transitions
+$transition-base: 200ms ease-in-out;
+$transition-fast: 150ms ease-in-out;
+$transition-slow: 300ms ease-in-out;

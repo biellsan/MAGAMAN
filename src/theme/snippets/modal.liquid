@@ -1,0 +1,18 @@
+{% comment %}
+  Modal Snippet
+  Reusable modal component
+{% endcomment %}
+
+<div id="Modal" class="modal" aria-hidden="true" data-modal>
+  <div class="modal__overlay" data-modal-overlay tabindex="-1">
+    <div class="modal__container" role="dialog" aria-modal="true">
+      <div class="modal__header">
+        <h2 class="modal__title" data-modal-title></h2>
+        <button class="modal__close" aria-label="{{ 'general.accessibility.close' | t }}" data-modal-close>
+          {% render 'icon-close' %}
+        </button>
+      </div>
+      <div class="modal__content" data-modal-content></div>
+    </div>
+  </div>
+</div>

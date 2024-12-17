@@ -1,0 +1,17 @@
+{% comment %}
+  Collection Sorting Snippet
+  Renders collection sorting options
+{% endcomment %}
+
+{%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+
+<div class="collection-sorting">
+  <label for="SortBy" class="sort-label">{{ 'collections.sorting.sort_by' | t }}</label>
+  <select name="sort_by" id="SortBy" class="sort-select" data-sort-by>
+    {%- for option in collection.sort_options -%}
+      <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>
+        {{ option.name }}
+      </option>
+    {%- endfor -%}
+  </select>
+</div>

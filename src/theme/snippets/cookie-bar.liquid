@@ -1,0 +1,99 @@
+{% if settings.cookie_bar_enable %}
+  {% assign lang = settings.cookie_bar_lang %}
+  {% assign remember = settings.cookie_bar_remember %}
+
+  {% if settings.cookie_bar_no_geoip %}
+    {% assign no_geoip = '&noGeoIp=1' %}
+  {% endif %}
+
+  {% if settings.cookie_bar_show_details_btn == false %}
+    {% assign hide_details_btn = '&hideDetailsBtn=1' %}
+  {% endif %}
+
+  {% if settings.cookie_bar_show_policy_link %}
+    {% assign show_policy_link = '&showPolicyLink=1&privacyPage=%2Fpolicies%2Fprivacy-policy' %}
+  {% endif %}
+
+  <script
+    defer
+    type="text/javascript"
+    src="https://cdn.jsdelivr.net/npm/cookie-bar/cookiebar-latest.min.js?forceLang={{ lang }}&tracking=0&thirdparty=1&always=1{{ no_geoip }}{{ hide_details_btn }}{{ show_policy_link }}&remember={{ remember }}"
+  ></script>
+
+  {% if settings.cookie_bar_z_index != '9999' %}
+    <style>
+                                                    #cookie-bar-prompt-logo {
+                                                    visibility: hidden !important;
+                                                }
+
+
+          #cookie-bar-button  {
+          background-color: var(--color-button-buy) !important;
+          color: var(--color-text-button-buy) !important;
+          border-color: #20202000 !important;
+      }
+
+                 #cookie-bar {
+                background: #fff !important;
+                -webkit-backdrop-filter: saturate(180%) blur(20px);
+                backdrop-filter: saturate(180%) blur(20px);
+                z-index: 9;
+                padding: 1.4rem !important;
+                display: flex !important;
+                justify-content: center;
+                align-items: center;
+                   box-shadow: 0 0.125rem 1.25rem rgb(0 0 0 / 8%);
+            }
+                              #cookie-bar p {
+                            float: left;
+                            margin: 4px 0 0 20px;
+                            padding: 0;
+                            color: #464646 !important;
+                            font-family: sans-serif;
+                        }
+
+                        body #cookie-bar p a {
+                      color: #5f5f5f !important;
+                      text-decoration: underline;
+                  }
+
+                              #cookie-bar-prompt-close {
+                                        background: url(https://cdn.jsdelivr.net/npm/cookie-bar/themes/images.png) no-repeat;
+                                        background-position: -100px -91px !important;
+                                        display: block;
+                                        background-color: #d1d8de;
+                                        height: 19px !important;
+                                        outline: 8px solid #d1d8de !important;
+                                        border-radius: 50px !important;
+                                        width: 19px !important;
+                                        float: right;
+                                    }
+
+                                          #cookie-bar-prompt p {
+                                        font-family: Arial,Helvetica,sans-serif;
+                                        color: #636161 !important;
+                                    }
+
+                                                #cookie-bar-prompt-content {
+                                              background: #fff !important;
+                                              border-radius: 7px;
+                                              box-shadow: 1px 2px 8px rgb(0 0 0 / 50%);
+                                              color: #000 !important;
+                                              margin: 0 auto;
+                                              max-width: 98%;
+                                              opacity: .97;
+                                              overflow: auto;
+                                              padding: 25px;
+                                              position: relative;
+                                              top: 5%;
+                                              width: 600px;
+                                              z-index: 9998;
+                                          }
+
+
+                                                                  #cookie-bar {
+                                                                      z-index: {{ settings.cookie_bar_z_index }} !important;
+                                                                  }
+    </style>
+  {% endif %}
+{% endif %}

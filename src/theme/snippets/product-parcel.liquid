@@ -1,0 +1,186 @@
+<p style="font-size: {{ section.settings.size_text_12x }}; margin-bottom: 0;">
+  em até <strong>12x</strong> de <strong> R$ <span class="valorEm12xCartao"></span></strong>
+  <!-- Button trigger modal -->
+  <button type="button" class="btn" data-toggle="modal" data-target="#exampleModal">
+    <span
+      class="main-font-title"
+      style="margin-left:0;color: var(--color-price);font-size: 14px"
+    >
+      Ver parcelamento</span
+    >
+  </button>
+</p>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="exampleModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h3 style="text-align: center; font-weight: bold;">Opções de parcelamento {{ product.title }}</h3>
+        <br>
+        <br>
+        {% assign qtd_sem_juros_parcelamento = settings.qtd_sem_juros_parcelamento | plus: 0 %}
+        <table class="table tabela-parcelamento">
+          <tr>
+            <th><p>Nº parcela</p></th>
+            <th>Valor da Parcela</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>1x de R$ <span class="valorEm1xCartao"> </span> à vista</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>
+              2x de R$
+              <span
+                class="valorEm2xCartao"
+              ></span>
+              {% if 2 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>
+              3x de R$
+              <span
+                class="valorEm3xCartao"
+              ></span>
+              {% if 3 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>
+              4x de R$
+              <span
+                class="valorEm4xCartao"
+              ></span>
+              {% if 4 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>
+              5x de R$
+              <span
+                class="valorEm5xCartao"
+              ></span>
+              {% if 5 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>
+              6x de R$
+              <span
+                class="valorEm6xCartao"
+              ></span>
+              {% if 6 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>
+              7x de R$
+              <span
+                class="valorEm7xCartao"
+              ></span>
+              {% if 7 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>
+              8x de R$
+              <span
+                class="valorEm8xCartao"
+              ></span>
+              {% if 8 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>
+              9x de R$
+              <span
+                class="valorEm9xCartao"
+              ></span>
+              {% if 9 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>
+              10x de R$
+              <span
+                class="valorEm10xCartao"
+              ></span>
+              {% if 10 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>
+              11x de R$
+              <span
+                class="valorEm11xCartao"
+              ></span>
+              {% if 11 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>
+              12x de R$
+              <span
+                class="valorEm12xCartao"
+              ></span>
+              {% if 12 <= qtd_sem_juros_parcelamento %}sem juros{% endif %}
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateElementsWithClassName(className, value) {
+      var els = document.getElementsByClassName(className);
+      Array.prototype.forEach.call(els, function(el) {
+          el.innerHTML = value;
+      });
+  }
+
+  function updateParcelamento(quantidade = 1) {
+      const valor_produto = quantidade * Number('{{ current_variant.price | money_without_currency }}'.replace('.', '').replace(',', '.'));
+      const qtd_sem_juros_parcelamento = Number('{{ settings.qtd_sem_juros_parcelamento }}');
+      updateElementsWithClassName("valorEm1xCartao", (valor_produto * Number( primeira_parcela_taxa )).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm2xCartao", (valor_produto *  (2 <= qtd_sem_juros_parcelamento ? 1 : Number( segunda_parcela_taxa )) / 2  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm3xCartao", (valor_produto *  (3 <= qtd_sem_juros_parcelamento ? 1 : Number( terceira_parcela_taxa )) / 3  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm4xCartao", (valor_produto *  (4 <= qtd_sem_juros_parcelamento ? 1 : Number( quarta_parcela_taxa )) / 4  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm5xCartao", (valor_produto *  (5 <= qtd_sem_juros_parcelamento ? 1 : Number( quinta_parcela_taxa )) / 5  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm6xCartao", (valor_produto *  (6 <= qtd_sem_juros_parcelamento ? 1 : Number( sexta_parcela_taxa )) / 6  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm7xCartao", (valor_produto *  (7 <= qtd_sem_juros_parcelamento ? 1 : Number( setima_parcela_taxa )) / 7  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm8xCartao", (valor_produto *  (8 <= qtd_sem_juros_parcelamento ? 1 : Number( oitava_parcela_taxa )) / 8  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm9xCartao", (valor_produto *  (9 <= qtd_sem_juros_parcelamento ? 1 : Number( nona_parcela_taxa )) / 9  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm10xCartao", (valor_produto *  (10 <= qtd_sem_juros_parcelamento ? 1 : Number( decima_parcela_taxa )) / 10  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName("valorEm11xCartao", (valor_produto *  (11 <= qtd_sem_juros_parcelamento ? 1 : Number( decima_primeira_parcela_taxa )) / 11  ).toFixed(2).replace('.', ','));
+      updateElementsWithClassName('valorEm12xCartao', (valor_produto * (12 <= qtd_sem_juros_parcelamento ? 1 : Number( decima_segunda_parcela_taxa )) / 12).toFixed(2).replace('.', ','))
+  }
+  updateParcelamento()
+</script>

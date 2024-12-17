@@ -1,0 +1,55 @@
+<!-- Social icons -->
+
+{% case section.settings.bg_color %}
+  {% when 'bg-white text-body', 'bg-light text-body' %}
+    {% assign social_color = 'text-secondary' %}
+  {% else %}
+    {% assign social_color = 'text-social' %}
+{% endcase %}
+
+{% assign social_accounts = 'Facebook, Twitter, Instagram, Tiktok, Pinterest, Snapchat, YouTube, Linkedin'
+  | split: ', '
+%}
+
+<div class="social-icons">
+  <ul class="list-unstyled d-flex ">
+    {% for social in social_accounts %}
+      {% assign social_handle = social | handleize %}
+      {% capture social_link %}social_{{ social_handle }}_link{% endcapture %}
+      {% capture social_icon %}icon-{{ social_handle }}{% endcapture %}
+
+      {% unless settings[social_link] == blank %}
+        <li>
+          <a
+            class="p-2 px-lg-1 d-flex border-bottom-0 {{ social_color }}"
+            href="{{ settings[social_link] }}"
+            data-toggle="tooltip"
+            data-placement="top"
+            title="{{ social }}"
+            aria-label="{{ social }}"
+            data-animate="{{ section.settings.social_icon_animate }}"
+          >
+            {% case social_handle %}
+              {% when 'facebook' %}
+                {% render 'icon-social-facebook' with size: 30, class: 'animate__animated' %}
+              {% when 'twitter' %}
+                {% render 'icon-social-twitter' with size: 24, class: 'animate__animated' %}
+              {% when 'instagram' %}
+                {% render 'icon-social-instagram' with size: 30, class: 'animate__animated' %}
+              {% when 'tiktok' %}
+                {% render 'icon-social-tiktok' with size: 24, class: 'animate__animated' %}
+              {% when 'pinterest' %}
+                {% render 'icon-social-pinterest' with size: 24, class: 'animate__animated' %}
+              {% when 'snapchat' %}
+                {% render 'icon-social-snapchat' with size: 24, class: 'animate__animated' %}
+              {% when 'youtube' %}
+                {% render 'icon-social-youtube' with size: 24, class: 'animate__animated' %}
+              {% when 'linkedin' %}
+                {% render 'icon-social-linkedin' with size: 24, class: 'animate__animated' %}
+            {% endcase %}
+          </a>
+        </li>
+      {% endunless %}
+    {% endfor %}
+  </ul>
+</div>

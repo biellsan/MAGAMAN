@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ shop.name }}</title>
+  <link rel="stylesheet" href="{{ 'styles.css' | asset_url }}">
+</head>
+<body>
+  <header>
+    <h1>Bem-vindo à {{ shop.name }}</h1>
+  </header>
+  
+  <main>
+    <h2>Produtos</h2>
+    <div id="product-list">
+      {% for product in collections.frontpage.products %}
+        <div class="product">
+          <h3>{{ product.title }}</h3>
+          <p>{{ product.description }}</p>
+          <button onclick="applyTheme()">Aplicar Tema</button>
+        </div>
+      {% endfor %}
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</p>
+  </footer>
+
+  <script>
+    function applyTheme() {
+      // Lógica para aplicar o tema
+      alert('Tema aplicado com sucesso!');
+    }
+  </script>
+</body>
+</html>

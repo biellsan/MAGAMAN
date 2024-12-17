@@ -1,0 +1,28 @@
+<script>
+  // vai copiar mesmo?
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.async = true;
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.3.2/lazysizes.min.js';
+  document.getElementsByTagName('head')[0].appendChild(script);
+
+  // Minificação de CSS
+  var link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'https://cdn.jsdelivr.net/npm/minify-css@1.1.1/dist/minify-css.min.css';
+  document.getElementsByTagName('head')[0].appendChild(link);
+
+  // Minificação de JavaScript
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.async = true;
+  script.src = 'https://cdn.jsdelivr.net/npm/minify-js@0.6.1/dist/minify-js.min.js';
+  document.getElementsByTagName('head')[0].appendChild(script);
+
+  // CDN
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.async = true;
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/cloudflare-static/1.0.0/cloudflare-static.min.js';
+  document.getElementsByTagName('head')[0].appendChild(script);
+</script>

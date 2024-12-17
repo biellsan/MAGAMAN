@@ -1,0 +1,104 @@
+<div class="blackfriday-container my-5">
+  <div class="blackfriday-upper pl-2 pr-2">
+    <div class="blackfriday-image" style="margin-right: 20px;">
+      <img
+        class="img-black"
+        src=" {{ block.settings.blackfriday_banner | img_url: ''  }}"
+        alt=" {{ block.settings.blackfriday_banner.alt | default: shop.name }}"
+      >
+    </div>
+    <div class="blackfriday-svg">{% render 'blackfriday-timer' %}</div>
+    <div class="blackfriday-timer-container">
+      <small class="blackfriday-small" style="color: #808080"> Acaba em: </small>
+      <span
+        class="blackfriday-countdown black-timer"
+      >
+        <span id="blackfriday-countdown"></span>
+      </span>
+    </div>
+  </div>
+  <div class="blackfriday-lower">
+    <div class="blackfriday-discount">
+      {% if current_variant.compare_at_price > current_variant.price and current_variant.available %}
+        {% render 'blackfriday-discount-svg' %} Desconto:
+        {{
+          current_variant.compare_at_price
+          | minus: current_variant.price
+          | times: 100.0
+          | divided_by: current_variant.compare_at_price
+          | round
+          | prepend: '-'
+          | append: '%'
+        }}
+      {% endif %}
+    </div>
+
+    <div class="timer"></div>
+    <div class="blackfriday-units blackfriday-small">Apenas <span class="blackfriday-unit"> </span> Unidades</div>
+  </div>
+</div>
+
+{% if block.settings.show_timer %}
+  {% include 'timer' %}
+{% else %}
+  {% include 'days' %}
+{% endif %}
+
+<style>
+    .img-black {
+  max-height: 80px !important;
+    max-width: 160px;
+  }
+    .encerrado {
+      color: {{ block.settings.color_encerrado_jhonhyx }};
+      font-size: 0.9rem;
+    }
+    .blackfriday-container{
+        background-color: {{ block.settings.blackfriday_backgroundcolor }};
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        border-radius: {{ block.settings.border_timer }}px;
+        align-items: center;
+        color: {{ block.settings.blackfriday_backgroundcolor-text }};
+    }
+    .blackfriday-upper{
+        display: flex;
+        align-items: center;
+    }
+    .blackfriday-lower{
+        display: flex;
+        align-items: center;
+        width: 95%;
+       background: linear-gradient(to right,{{ block.settings.grad_a }} , {{ block.settings.grad_b }} );
+        margin-bottom: 10px;
+        border-radius: {{ block.settings.border_timer }}px;
+        padding: 5px;
+        justify-content: space-around;
+    }
+    .blackfriday-small{
+        font-size: 0.6rem;
+    }
+    .blackfriday-unit{
+        font-size: 1rem;
+        color: black;
+        font-weight: 600;
+    }
+    .blackfriday-discount{
+        font-size: .8rem;
+        align-self: end;
+    }
+    .blackfriday-svg svg path{
+        fill: {{ block.settings.blackfriday_svg_color }};
+    }
+    .black-timer{
+      color: {{ block.settings.color_jhonhyx }};
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .blackfriday-timer-container{
+        display: flex;
+        flex-direction: column;
+        min-width: 105px;
+    }
+</style>

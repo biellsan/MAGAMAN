@@ -1,0 +1,27 @@
+// Theme Styles
+
+// Variables
+@import "styles/variables";
+
+// Base Styles
+@import "styles/base";
+@import "styles/typography";
+@import "styles/buttons";
+@import "styles/forms";
+
+// Components
+@import "styles/components/announcement-bar";
+@import "styles/components/header";
+@import "styles/components/footer";
+@import "styles/components/modal";
+@import "styles/components/pagination";
+@import "styles/components/product-card";
+@import "styles/components/collection-filters";
+
+// Templates
+@import "styles/templates/collection";
+@import "styles/templates/product";
+@import "styles/templates/cart";
+
+// Utilities
+@import "styles/utilities";

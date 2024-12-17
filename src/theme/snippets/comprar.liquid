@@ -1,0 +1,555 @@
+
+                <!-- Add to cart form -->
+                {% form
+                        'product',
+                        product,
+                        class: 'pt-5 margem-form-botoes',
+                        data-product-id: product.id,
+                        data-product-url: product.url,
+                        data-product-title: product.title,
+                        data-product-available: product.available,
+                        data-variant-title: current_variant.title,
+                        data-variant-img-src: current_image,
+                        data-variant-img-id: current_variant.image.id,
+                        data-variant-img-alt: current_variant.image.alt,
+                        data-variant-compare-price: current_variant.compare_at_price,
+                        data-variant-price: current_variant.price %}
+
+                    {% if product.has_only_default_variant %}
+                        <input type="hidden" name="id" value="{{ current_variant.id }}">
+                    {% else %}
+
+                        <!-- Variant select (no-js) -->
+                        <div class="no-js form-group">
+                            <select
+                                    name="id"
+                                    class="custom-select">
+                                {% for variant in product.variants %}
+                                    <option
+                                            onclick=updateParcelamento
+                                            {% if variant == current_variant %}selected{% endif %}
+                                            data-options="{{ variant.options | join: '-' }}"
+                                            value="{{ variant.id }}">
+                                        {{ variant.title }} - {{ variant.price | money }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+
+
+                        <!-- Options select (js) -->
+                        <div class="js pb-3">
+                            {% for option in product.options_with_values %}
+                                {%if block.settings.color_swatches_enabled %}
+                                    {% if option.name == block.settings.variant_swatch_color_name or option.name == 'Cor' or option.name == 'cor' or option.name == 'Color' %}
+                                        <span class="d-block opacity-80 mb-2">
+                                            {{ option.name }}: <span style="font-weight: 800; font-size: 14px;color: var(--color-price);">{{ option.selected_value }}</span>
+                                        </span>
+                                        <ul class="color-swatches list-unstyled d-flex flex-wrap mb-4">
+                                            {% for value in option.values %}
+
+                                                {% comment %} Pegando imagem da opção {% endcomment %}
+                                                {% assign encontrado = false %}
+                                                {% for variante in product.variants %}
+                                                    {% for opcaoVariante in variante.options %}
+                                                        {% if opcaoVariante == value %}
+                                                            {% assign swatch_img = variante.featured_media %}
+                                                            {% assign encontrado = true %}
+                                                            {% break %}
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                    {%if encontrado %}
+                                                        {% break %}
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                                {%if swatch_img %}
+                                                    <li class="color-swatches-item">
+                                                        <input
+                                                                class="product-option form-check-input d-none"
+                                                                type="radio"
+                                                                name="{{ option.name | handleize }}"
+                                                                id="option-{{ option.name | handleize }}-{{ value | handleize }}-product-{{ product.id }}"
+                                                                value="{{ value | escape }}"
+                                                                {% if option.selected_value == value %}checked{% endif %}>
+                                                        {% if block.settings.swatch_quadrado %}
+                                                            <label
+                                                                    class="form-check-label img-no-radius"
+                                                                    title="{{ value | escape }}"
+                                                                    for="option-{{ option.name | handleize }}-{{ value | handleize }}-product-{{ product.id }}">
+                                                                <img width="{{ block.settings.size_swatch }}" height="{{ block.settings.size_swatch }}" src="{{ swatch_img | img_url: '500x500', crop: 'center' }}"  alt="">
+                                                            </label>
+                                                        {% else %}
+                                                            <label
+                                                                    class="form-check-label img-radius"
+                                                                    title="{{ value | escape }}"
+                                                                    for="option-{{ option.name | handleize }}-{{ value | handleize }}-product-{{ product.id }}">
+                                                                        <img width="{{ block.settings.size_swatch }}" height="{{ block.settings.size_swatch }}" src="{{ swatch_img | img_url: '500x500', crop: 'center' }}" alt="">
+                                                                </label>
+                                                         {% endif %}
+                                                    </li>
+                                                {% else %}
+                                                    <li class="color-swatches-item">
+                                                        <input
+                                                                class="product-option form-check-input d-none"
+                                                                type="radio"
+                                                                name="{{ option.name | handleize }}"
+                                                                id="option-{{ option.name | handleize }}-{{ value | handleize }}-product-{{ product.id }}"
+                                                                value="{{ value | escape }}"
+                                                                {% if option.selected_value == value %}checked{% endif %}>
+                                                        <label
+                                                                class="form-check-label variavel-cor"
+                                                                title="{{ value | escape }}"
+                                                                for="option-{{ option.name | handleize }}-{{ value | handleize }}-product-{{ product.id }}">
+                                                        <span>
+                                                            {{ value | escape }}
+                                                        </span>
+                                                        </label>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+
+                                        </ul>
+                                        
+                                {% elsif option.name == 'Kit' or option.name == 'kit' %}
+
+                                    <!-- Kits de produtos -->
+                                    <div class="kit-swatches">
+
+                                        {% for value in option.values %}  
+                                        {% for variante in product.variants %}
+                                            {% if variante.option1 == value and variante.option2 == product.options_with_values[1].selected_value and variante.option3 == product.options_with_values[2].selected_value%}
+                                            {%- assign kit_img = variante.featured_media -%}
+                                            {%- assign kit_price = variante.price -%}
+                                            {%- assign kit_compare_price = variante.compare_at_price -%}
+                                            {%- assign kit_available = variante.available -%}
+                                            {% endif %}
+                                        {% endfor %}  
+
+                                        <input type="radio"
+                                            class="product-option d-none kit_input"
+                                            name="{{ option.name | handleize }}"
+                                            id="option-{{ option.name | handleize }}-{{ value | handleize }}-product-{{ product.id }}"
+                                            value="{{ value | escape }}"
+                                            {% if option.selected_value == value %} checked {% endif %}>
+
+                                        <label class="kit-label" for="option-{{ option.name | handleize }}-{{ value| handleize }}-product-{{ product.id }}">
+
+                                        <div class="kit-swatches-item">
+                                            <div class="kit-content-left">
+                                                <div class="kit-product-image-wrapper">
+                                                    <img class="kit-product-image" src="{{ kit_img | img_url: '500x500', crop: 'center' }}" alt="">
+                                                </div>    
+                                                <div class="kit-swatches-quantity">
+
+                                                    {% if block.settings.show_badge_mostsell %}
+                                                        {% if forloop.index == block.settings.badge_mostsell_position%}
+                                                        <div class="kit-mostsell-badge kit-badges">
+                                                            Mais Vendido
+                                                        </div>
+                                                        {% endif %}
+                                                    {% endif %}
+
+                                                    {% if block.settings.show_badge_moreeconomy %}
+                                                        {% if forloop.index == block.settings.badge_moreeconomy_position%}
+                                                        <div class="kit-moreeconomy-badge kit-badges">
+                                                            Maior Economia
+                                                        </div>
+                                                        {% endif %}
+                                                    {% endif %}
+
+                                                    <div class="kit-item-title">
+                                                        {{value}}
+                                                    </div>
+
+                                                    {% if kit_compare_price != null and kit_price < kit_compare_price %}
+                                                    <div class="kit-save-badge kit-badges">
+                                                        <span class="kit-badge-save-icon">
+                                                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M6.01754 5.04822C5.74195 4.97933 5.46635 4.84153 5.25966 4.63483C5.05296 4.56594 4.98407 4.35924 4.98407 4.22144C4.98407 4.08365 5.05296 3.87695 5.19076 3.80805C5.39746 3.67026 5.60415 3.53246 5.81085 3.60136C6.22424 3.60136 6.56873 3.80805 6.77542 4.08365L7.39551 3.25687C7.18881 3.05017 6.98212 2.91238 6.77542 2.77458C6.56873 2.63678 6.29313 2.56788 6.01754 2.56788V1.60331H5.19076V2.56788C4.84627 2.63678 4.50178 2.84348 4.22618 3.11907C3.95059 3.46356 3.7439 3.87695 3.81279 4.29034C3.81279 4.70373 3.95059 5.11712 4.22618 5.39272C4.57068 5.73721 5.05296 5.9439 5.46635 6.1506C5.67305 6.2195 5.94864 6.35729 6.15534 6.49509C6.29313 6.63289 6.36203 6.83958 6.36203 7.04628C6.36203 7.25297 6.29313 7.45967 6.15534 7.66636C5.94864 7.87306 5.67305 7.94195 5.46635 7.94195C5.19076 7.94195 4.84627 7.87306 4.63957 7.66636C4.43288 7.52856 4.22618 7.32187 4.08839 7.11517L3.3994 7.87306C3.6061 8.14865 3.81279 8.35534 4.08839 8.56204C4.43288 8.76873 4.84627 8.97543 5.25966 8.97543V9.87111H6.01754V8.83763C6.43093 8.76873 6.77542 8.56204 7.05102 8.28644C7.39551 7.94195 7.6022 7.39077 7.6022 6.90848C7.6022 6.49509 7.46441 6.0128 7.11991 5.73721C6.77542 5.39272 6.43093 5.18602 6.01754 5.04822ZM5.60415 0.225342C2.57262 0.225342 0.0922852 2.70568 0.0922852 5.73721C0.0922852 8.76873 2.57262 11.2491 5.60415 11.2491C8.63568 11.2491 11.116 8.76873 11.116 5.73721C11.116 2.70568 8.63568 0.225342 5.60415 0.225342ZM5.60415 10.4912C2.98601 10.4912 0.850167 8.35534 0.850167 5.73721C0.850167 3.11907 2.98601 0.983223 5.60415 0.983223C8.22229 0.983223 10.3581 3.11907 10.3581 5.73721C10.3581 8.35534 8.22229 10.4912 5.60415 10.4912Z" fill="#494949"/>
+                                                            </svg>
+                                                        </span>
+                                                        Economize 
+                                                        <strong> 
+                                                            {{ kit_compare_price 
+                                                                | minus: kit_price
+                                                                | money
+                                                            }}
+                                                        </strong>
+                                                    </div>
+                                                    {% endif %}
+
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="kit-content-right">
+                                                {% if kit_price < kit_compare_price and kit_compare_price != null %}
+                                                <div class="kit-discount-badge kit-badges">
+                                                    {{ kit_compare_price
+                                                        | minus: kit_price
+                                                        | times: 100.0
+                                                        | divided_by: kit_compare_price
+                                                        | round
+                                                        | prepend: '-'
+                                                        | append: '%' }}
+                                                </div>
+                                                {%endif%}
+                                                
+                                                {% if kit_available != true %}
+                                                <div class="kit-soldout-badge kit-badges">
+                                                    Esgotado
+                                                </div>
+                                                {% endif%}
+
+                                                <div class="kit-comparation-prices"> 
+                                                    {% if kit_compare_price != null%}
+                                                    <div class="kit-old-value-price">
+                                                        {{ kit_compare_price | money }}
+                                                    </div>
+                                                    {% endif%}
+                                                    <div class="kit-new-value-price">
+                                                        {{ kit_price | money }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </label>
+                                        {% endfor %}
+                                    </div>
+                                    <!--End Kits -->
+                                    
+                                    {% else %}
+                                        <span class="d-block opacity-80 mb-1">
+                                            {{ option.name }}
+                                        </span>
+                                        <ul class="color-swatches list-unstyled d-flex flex-wrap mb-4">
+                                            {% for value in option.values %}
+                                                <li class="color-swatches-item">
+                                                    <input
+                                                            class="product-option form-check-input d-none"
+                                                            type="radio"
+                                                            name="{{ option.name | handleize }}"
+                                                            id="option-{{ option.name | handleize }}-{{ value | handleize }}-product-{{ product.id }}"
+                                                            value="{{ value | escape }}"
+                                                            {% if option.selected_value == value %}checked{% endif %}>
+                                                    <label
+                                                            class="form-check-label variavel-cor"
+                                                            title="{{ value | escape }}"
+                                                            for="option-{{ option.name | handleize }}-{{ value | handleize }}-product-{{ product.id }}">
+                                                        <span>
+                                                            {{ value | escape }}
+                                                        </span>
+                                                    </label>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {%endif%}
+                                {% else %}
+                                    <span class="d-flex align-items-center mb-3">
+                                        {{ option.name }}
+                                    </span>
+
+                                    <div class="d-flex align-items-center mb-3  d-none d-xl-block">
+                                        <div class="input-group">
+                                            <select
+                                                    id="option-{{ option.name | handleize }}-product-{{ product.id }}"
+                                                    class="product-option custom-select">
+                                                {% for value in option.values %}
+                                                    <option
+                                                            {% if option.selected_value == value %}selected{% endif %}
+                                                            value="{{ value | escape }}">
+                                                        {{ value | escape }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        {% if block.settings.show_size_guide_button and block.settings.size_guide_option_name == option.name %}
+                                            <button
+                                                    type="button"
+                                                    class="size-guide-btn btn ml-3 flex-shrink-0 {{ block.settings.size_guide_btn_color | escape }}"
+                                                    data-toggle="modal"
+                                                    data-target="#size-guide-modal">
+                                                {{ 'product.size_guide' | t }}
+                                            </button>
+                                            <div
+                                                    class="modal fade"
+                                                    id="size-guide-modal"
+                                                    tabindex="-1"
+                                                    aria-labelledby="size-guide-modal-label"
+                                                    aria-hidden="true">
+                                                <div
+                                                        class="modal-dialog modal-dialog-scrollable animate__animated"
+                                                        data-animate-enter="{{ settings.modal_animation_enter }}"
+                                                        data-animate-exit="{{ settings.modal_animation_exit }}"
+                                                        data-animate-speed="{{ settings.modal_animation_speed }}">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header py-3">
+                                                            <h5 class="modal-title" id="cart-modal-label">
+                                                                {{ 'product.size_guide' | t }}
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="{{ 'general.close' | t }}">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            {{ pages[block.settings.size_guide_page_handle].content }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Inventory bar -->
+                    {% if block.settings.inventory_bar_enable %}
+                        {% assign inventory_bar_low_no = block.settings.inventory_bar_low_no | divided_by: 1 %}
+                        {% assign inventory_bar_has_stock_color = block.settings.inventory_bar_has_stock_color %}
+
+                        {% if current_variant.available == false %}
+                            {% assign progress_bar_width = '100%' %}
+                            {% assign progress_bar_color = 'bg-danger' %}
+                        {% elsif current_variant.inventory_quantity > 0 and current_variant.inventory_quantity <= inventory_bar_low_no %}
+                            {% assign progress_bar_width = '25%' %}
+                            {% assign progress_bar_color = 'bg-warning' %}
+                        {% else %}
+                            {% assign progress_bar_width = '75%' %}
+                            {% assign progress_bar_color = inventory_bar_has_stock_color %}
+                        {% endif %}
+
+                        <div class="inventory-bar mt-2 mb-4">
+
+                            <div class="progress">
+                                <div
+                                        class="progress-bar progress-bar-striped {{ progress_bar_color }}"
+                                        data-width="{{ progress_bar_width }}"
+                                        style="{% if current_variant.available %}min-width: 160px; width: 0%{% else %}width: 100%{% endif %}">
+                                    <span class="px-2 font-weight-bold">
+                                        {% if current_variant.inventory_management == "shopify" and current_variant.inventory_policy != "continue" %}
+                                            {{ 'product.stock_count' | t: count: current_variant.inventory_quantity }}
+                                        {% else %}
+                                            {% if current_variant.available %}
+                                                {{ 'product.in_stock' | t }}
+                                            {% else %}
+                                                {{ 'product.unavailable' | t }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div id="box-botoes-comprar">
+                        {% if current_variant.available %}
+                                <div class="d-flex">
+
+                                    <!-- Quantity field -->
+                                    {% if block.settings.show_qty %}
+                                        <div class="product-qty {% if block.settings.show_buy_it_now_button %}has-add-to-cart-button{% endif %}">
+                                            <label for="qty" class="sr-only">
+                                                {{ 'product.quantity' | t }}
+                                            </label>
+                                            <input
+                                                    type="number"
+                                                    class="bs-input-spinner qty form-control"
+                                                    size="20"
+                                                    name="quantity"
+                                                    id="quantitySelected"
+                                                    value="1"
+                                                    min="1">
+                                        </div>
+                                    {% else %}
+                                        <input
+                                                type="hidden"
+                                                name="quantity"
+                                                id="quantitySelected"
+                                                value="1">
+                                    {% endif %}
+
+                                    <script>
+                                        document.getElementById("quantitySelected").addEventListener("change", function() {
+                                            const quantidade = document.getElementById("quantitySelected").value
+                                            updateParcelamento(quantidade)
+                                            const valor_produto = quantidade * Number('{{ current_variant.price | money_without_currency }}'.replace('.', '').replace(',', '.'));
+                                            updateElementsWithClassName('valorEm12xCartao', (valor_produto * (12 <= qtd_sem_juros_parcelamento ? 1 : Number( decima_segunda_parcela_taxa )) / 12).toFixed(2).replace('.', ','))
+                                        });
+                                    </script>
+
+                                    <!-- Comprar agora -->
+                                    {% if block.settings.show_buy_it_now_button %}
+                                        <button
+                                                type="submit"
+                                                name="buttonBuy"
+                                                class="buttonPressed add-to-cart-btn btn button-buy btn-block d-flex align-items-center justify-content-center {% if block.settings.add_to_cart_btn_animation != blank and current_variant.available %}animate__animated{% endif %}"
+                                                data-animate-class="{{ block.settings.add_to_cart_btn_animation | escape }}"
+                                                {% unless current_variant.available %}disabled{% endunless %}>
+
+                                        <span
+                                                class="buy-now-btn-icon"
+                                                style="display: flex;">
+                                            {% render 'icon-bag' size: 21, class: 'mr-2' %}
+                                        </span>
+
+                                            <span
+                                                    class="buy-now-btn-spinner spinner-border spinner-border-sm mr-2"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                    style="display: none;">
+                                        </span>
+
+                                            <span
+                                                    class="buy-now-btn-text-add add-to-cart-btn-text">
+                                            {{ 'product.buy_now' | t }}
+                                        </span>
+
+                                            <span
+                                                    class="buy-now-btn-text-loading add-to-cart-btn-text"
+                                                    style="display: none;">
+                                            {{ 'general.loading' | t }}...
+                                        </span>
+                                        </button>
+                                    {% endif %}
+
+
+                                </div>
+
+                                <div class="d-flex" style="margin-top: 10px">
+
+                                    <!-- Adicionar ao carrinho -->
+                                    {% if block.settings.show_add_to_cart_button %}
+                                        <button
+                                                type="submit"
+                                                name="buttonAdd"
+                                                class="buttonPressed add-to-cart-btn btn button-add-cart btn-block d-flex align-items-center justify-content-center {% if block.settings.add_to_cart_btn_animation != blank and current_variant.available %}animate__animated{% endif %}"
+                                                data-animate-class="{{ block.settings.add_to_cart_btn_animation | escape }}"
+                                                {% unless current_variant.available %}disabled{% endunless %}>
+
+                                        <span
+                                                class="add-to-cart-btn-icon"
+                                                style="display: flex;">
+                                            {% render 'icon-cart' size: 21, class: 'mr-2' %}
+                                        </span>
+
+                                            <span
+                                                    class="add-to-cart-btn-spinner spinner-border spinner-border-sm mr-2"
+                                                    role="status"
+                                                    aria-hidden="true"
+                                                    style="display: none;">
+                                        </span>
+
+                                            <span
+                                                    class="add-to-cart-btn-text-add add-to-cart-btn-text">
+                                            {{ 'product.add_to_cart' | t }}
+                                        </span>
+
+                                            <span
+                                                    class="add-to-cart-btn-text-loading add-to-cart-btn-text"
+                                                    style="display: none;">
+                                            {{ 'general.loading' | t }}...
+                                        </span>
+                                        </button>
+                                    {% endif %}
+
+                                </div>
+                        {% else %}
+                            <h3>{{ 'product.unavailable' | t }}</h3>
+                        {% endif %}
+                    </div>
+                    <div style="display: none" id="box-indisponivel">
+                        <h3>{{ 'product.unavailable' | t }}</h3>
+                    </div>
+                {% endform %}
+                <div class="margem-abaixo-form-botoes">
+                    {% if block.settings.enable_timer %}
+
+                        {%liquid
+                          assign time_limit = block.settings.time_limit
+                        %}
+
+                        <block class="countdown-container-main" id="countdown-container-main">
+                                <div class="text-timer" style="font-size: {{ block.settings.size_text }}">{{block.settings.text_timer }}</div>
+                                <div class="countdown-container">
+                                  {% if time_limit != blank %}
+                                    <div class="countdown-el days-c">
+                                        <p style="font-size: {{ block.settings.size_timer }}" class="big-text" id="days">0</p>
+                                        <span style="font-size: {{ block.settings.size_timer_text }}">DIAS</span>
+                                    </div>
+                                    <div class="kb-countdown-item kb-countdown-date-item kb-countdown-divider-item kb-countdown-divider-item-hours" style="display:flex; flex-direction:column; font-size: 25px;"><span class="kb-countdown-number">:</span><span class="kb-countdown-label">&nbsp;</span></div>
+                                {% endif %}
+                                  <div class="countdown-el hours-c">
+                                      <p style="font-size: {{ block.settings.size_timer }}" class="big-text" id="hours">0</p>
+                                      <span style="font-size: {{ block.settings.size_timer_text }}">HRS</span>
+                                      
+                                    </div>
+                                    <div class="kb-countdown-item kb-countdown-date-item kb-countdown-divider-item kb-countdown-divider-item-hours" style="display:flex; flex-direction:column;font-size: 25px;"><span class="kb-countdown-number">:</span><span class="kb-countdown-label">&nbsp;</span></div>
+                                  <div class="countdown-el mins-c">
+                                      <p style="font-size: {{ block.settings.size_timer }}" class="big-text" id="mins">0</p>
+                                      <span style="font-size: {{ block.settings.size_timer_text }}">MIN</span>
+                                      
+                                    </div>
+                                    <div class="kb-countdown-item kb-countdown-date-item kb-countdown-divider-item kb-countdown-divider-item-hours" style="display:flex; flex-direction:column;font-size: 25px;"><span class="kb-countdown-number">:</span><span class="kb-countdown-label">&nbsp;</span></div>
+                                  <div class="countdown-el seconds-c">
+                                      <p style="font-size: {{ block.settings.size_timer }}" class="big-text" id="seconds">0</p>
+                                      <span style="font-size: {{ block.settings.size_timer_text }}">SEG</span>
+
+                                  </div>
+                                </div>
+                        </block>
+
+
+                        <script>
+                          const container = document.getElementById("countdown-container-main");
+                          const daysEl = document.getElementById("days");
+                          const hoursEl = document.getElementById("hours");
+                          const minsEl = document.getElementById("mins");
+                          const secondsEl = document.getElementById("seconds");
+
+                          const configTimeLimit = "{{ time_limit }}"
+
+                          let newYears
+                          if (configTimeLimit)
+                            newYears = configTimeLimit;
+                          else
+                            newYears = "11/15/2050";
+
+                          function countdown() {
+                              const newYearsDate = new Date(newYears);
+                              const currentDate = new Date();
+
+                              const totalSeconds = (newYearsDate - currentDate) / 1000;
+
+                              const days = Math.floor(totalSeconds / 3600 / 24)
+                              const hours = Math.floor(totalSeconds / 3600) % 24;
+                              const mins = Math.floor(totalSeconds / 60) % 60;
+                              const seconds = Math.floor(totalSeconds) % 60;
+                              if (days < 0 || hours < 0 || mins < 0 || seconds < 0 ){
+                                container.style.display = 'none';
+                              }else{
+                                if (daysEl){
+                                  daysEl.innerHTML = days
+                                }
+                                hoursEl.innerHTML = formatTime(hours);
+                                minsEl.innerHTML = formatTime(mins);
+                                secondsEl.innerHTML = formatTime(seconds);
+                              }
+
+                          }
+
+                          function formatTime(time) {
+                              return time < 10 ? `0${time}` : time;
+                          }
+
+                          // initial call
+                          countdown();
+
+                          setInterval(countdown, 1000);
+
+
+                        </script>
+
+                    {% endif %}
